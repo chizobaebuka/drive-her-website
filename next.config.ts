@@ -35,6 +35,15 @@ function extra(name: string): string {
   return value ? ` ${value.split(/\s+/).filter(Boolean).join(' ')}` : '';
 }
 
+/**
+ * React's development build uses eval() for debugging features — rebuilding
+ * call stacks that originated in another environment, among others. The
+ * production build never does, so the allowance is derived from NODE_ENV and
+ * can only ever appear under `next dev`. `next build` and `next start` both
+ * run with NODE_ENV=production, so a deployed response never carries it.
+ */
+const devEval = process.env.NODE_ENV === 'production' ? '' : " 'unsafe-eval'";
+
 const frameSrc = extra('CSP_FRAME_SRC');
 
 const csp = [
@@ -43,7 +52,7 @@ const csp = [
   "object-src 'none'",
   "frame-ancestors 'none'",
   "form-action 'self'",
-  `script-src 'self' 'unsafe-inline'${extra('CSP_SCRIPT_SRC')}`,
+  `script-src 'self' 'unsafe-inline'${devEval}${extra('CSP_SCRIPT_SRC')}`,
   `style-src 'self' 'unsafe-inline'${extra('CSP_STYLE_SRC')}`,
   `img-src 'self' data: blob:${extra('CSP_IMG_SRC')}`,
   `font-src 'self' data:${extra('CSP_FONT_SRC')}`,
