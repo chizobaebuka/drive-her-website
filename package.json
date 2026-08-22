@@ -2,7 +2,7 @@
   "name": "driveher-website",
   "version": "1.0.0",
   "private": true,
-  "description": "DriveHer Urban Mobility Services Limited \u2014 corporate & conversion website",
+  "description": "DriveHer Urban Mobility Services Limited — corporate & conversion website",
   "engines": {
     "node": ">=20"
   },
@@ -10,28 +10,27 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
+    "lint": "eslint .",
     "typecheck": "tsc --noEmit",
     "analyze": "ANALYZE=true next build"
   },
   "dependencies": {
-    "next": "^15.5.23",
-    "react": "19.1.1",
-    "react-dom": "19.1.1",
-    "zod": "^3.24.1"
+    "next": "^16.3.2",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8",
+    "zod": "^4.4.3"
   },
   "devDependencies": {
-    "@eslint/eslintrc": "^3.3.6",
     "@fontsource-variable/inter": "^5.3.0",
     "@fontsource/sora": "^5.3.0",
     "@tailwindcss/postcss": "^4.1.13",
-    "@types/node": "^22.10.5",
+    "@types/node": "^26.2.0",
     "@types/react": "^19.0.7",
     "@types/react-dom": "^19.0.3",
-    "eslint": "^9.18.0",
-    "eslint-config-next": "^15.5.23",
+    "eslint": "^9.39.5",
+    "eslint-config-next": "^16.3.2",
     "tailwindcss": "^4.1.13",
-    "typescript": "^5.7.3"
+    "typescript": "^6.0.3"
   },
   "overrides": {
     "sharp": "^0.35.3",

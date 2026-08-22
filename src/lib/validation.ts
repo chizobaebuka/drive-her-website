@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { INTERESTS } from './interests';
 
 /**
  * Server-side contract for every lead submitted through the site.
@@ -9,30 +10,6 @@ import { z } from 'zod';
  * (`company` honeypot and `elapsed` time-on-form) are validated here rather
  * than in the browser where they could simply be skipped.
  */
-
-export const INTERESTS = [
-  'investment',
-  'government',
-  'partnership',
-  'driver',
-  'corporate',
-  'media',
-  'careers',
-  'general',
-] as const;
-
-export type Interest = (typeof INTERESTS)[number];
-
-export const interestLabels: Record<Interest, string> = {
-  investment: 'Investment — pre-seed round',
-  government: 'Government / PPP partnership',
-  partnership: 'Private sector or development partner',
-  driver: 'I want to drive with DriveHer',
-  corporate: 'Corporate transport or logistics',
-  media: 'Media or speaking request',
-  careers: 'Careers',
-  general: 'Something else',
-};
 
 /** Rejects control characters that have no place in a name or subject line. */
 const noControlChars = (value: string) => !/[\x00-\x1F\x7F]/.test(value);
@@ -52,7 +29,10 @@ export const leadSchema = z.object({
     .string()
     .trim()
     .toLowerCase()
-    .min(5, 'Email address is required.')
+    // `min` runs before `email`, so it must only catch the empty case —
+    // otherwise a short-but-invalid address like "nope" is reported as
+    // missing rather than malformed.
+    .min(1, 'Email address is required.')
     .max(160, 'Email address is too long.')
     .email('Enter a valid email address.'),
 
@@ -76,7 +56,7 @@ export const leadSchema = z.object({
     .or(z.literal('')),
 
   interest: z.enum(INTERESTS, {
-    errorMap: () => ({ message: 'Choose what you would like to talk about.' }),
+    error: () => 'Choose what you would like to talk about.',
   }),
 
   location: z
@@ -93,9 +73,7 @@ export const leadSchema = z.object({
     .max(4000, 'Message must be 4000 characters or fewer.'),
 
   consent: z.literal(true, {
-    errorMap: () => ({
-      message: 'Please confirm you are happy for us to contact you.',
-    }),
+    error: () => 'Please confirm you are happy for us to contact you.',
   }),
 
   /**
@@ -118,5 +96,5 @@ export const leadSchema = z.object({
 
 export type LeadInput = z.infer<typeof leadSchema>;
 
-/** Anything faster than this is a script, not a person. */
-export const MIN_FORM_FILL_MS = 2500;
+export { INTERESTS, MIN_FORM_FILL_MS, interestLabels } from './interests';
+export type { Interest } from './interests';

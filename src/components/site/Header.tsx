@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
+import { useScrolledPast } from '@/lib/use-scrolled-past';
 import { Button, ArrowRight } from '@/components/ui/Button';
 import { primaryNav } from '@/lib/site';
 import { cn } from '@/lib/utils';
@@ -12,14 +13,18 @@ export function Header() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const [openGroup, setOpenGroup] = useState<string | null>(null);
-  const [scrolled, setScrolled] = useState(false);
+  const scrolled = useScrolledPast(12);
   const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // Close every menu on navigation.
-  useEffect(() => {
+  // Close every menu on navigation. Done during render rather than in an
+  // effect so the closed state is committed in the same pass as the new route
+  // — an effect would paint the stale open menu for one frame first.
+  const [lastPath, setLastPath] = useState(pathname);
+  if (lastPath !== pathname) {
+    setLastPath(pathname);
     setOpen(false);
     setOpenGroup(null);
-  }, [pathname]);
+  }
 
   // Lock body scroll while the mobile drawer is open.
   useEffect(() => {
@@ -28,13 +33,6 @@ export function Header() {
       document.body.style.overflow = '';
     };
   }, [open]);
-
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 12);
-    onScroll();
-    window.addEventListener('scroll', onScroll, { passive: true });
-    return () => window.removeEventListener('scroll', onScroll);
-  }, []);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {

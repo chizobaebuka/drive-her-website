@@ -127,16 +127,10 @@ const nextConfig: NextConfig = {
         source: '/:path*',
         headers: securityHeaders,
       },
-      {
-        // Fingerprinted build assets are safe to cache forever.
-        source: '/_next/static/:path*',
-        headers: [
-          {
-            key: 'Cache-Control',
-            value: 'public, max-age=31536000, immutable',
-          },
-        ],
-      },
+      // Note: /_next/static is deliberately NOT given a custom Cache-Control
+      // rule. Next already serves those fingerprinted assets as
+      // `public, max-age=31536000, immutable`, and overriding it here breaks
+      // dev-server behaviour (Next 16 warns about exactly this).
       {
         source: '/images/:path*',
         headers: [

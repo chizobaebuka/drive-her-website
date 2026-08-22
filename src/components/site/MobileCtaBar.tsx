@@ -2,8 +2,8 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useEffect, useState } from 'react';
 import { cn } from '@/lib/utils';
+import { useScrolledPast } from '@/lib/use-scrolled-past';
 
 /**
  * Persistent mobile action bar. Appears once the visitor has shown intent by
@@ -12,14 +12,7 @@ import { cn } from '@/lib/utils';
  */
 export function MobileCtaBar() {
   const pathname = usePathname();
-  const [visible, setVisible] = useState(false);
-
-  useEffect(() => {
-    const onScroll = () => setVisible(window.scrollY > 700);
-    onScroll();
-    window.addEventListener('scroll', onScroll, { passive: true });
-    return () => window.removeEventListener('scroll', onScroll);
-  }, []);
+  const visible = useScrolledPast(700);
 
   if (pathname.startsWith('/contact')) return null;
 

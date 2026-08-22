@@ -2,7 +2,7 @@
 
 import { useEffect, useId, useRef, useState } from 'react';
 import { ArrowRight } from '@/components/ui/Button';
-import { INTERESTS, interestLabels, type Interest } from '@/lib/validation';
+import { INTERESTS, interestLabels, type Interest } from '@/lib/interests';
 import { cn } from '@/lib/utils';
 
 type Status = 'idle' | 'submitting' | 'success' | 'error';
@@ -35,9 +35,16 @@ export function LeadForm({
   }, []);
 
   // Allow an inbound link like /contact?interest=corporate to preselect.
+  //
+  // This genuinely has to run after hydration. Reading the query string during
+  // render would diverge from the server-rendered markup, and `useSearchParams`
+  // would opt the whole page out of static generation — a much larger cost than
+  // one extra render on the small subset of visits that arrive with the
+  // parameter set.
   useEffect(() => {
     const param = new URLSearchParams(window.location.search).get('interest');
     if (param && (INTERESTS as readonly string[]).includes(param)) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- see above
       setInterest(param as Interest);
     }
   }, []);

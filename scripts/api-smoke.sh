@@ -32,7 +32,8 @@ post '{"name":"Speedy","email":"b@example.com","interest":"general","message":"i
 echo "5. invalid interest enum (expect 422)"
 post '{"name":"Ada Obi","email":"a@example.com","interest":"__proto__","message":"enum injection attempt here","consent":true,"elapsed":9000}'
 
-echo "6. control characters in name (expect 422)"
+echo "6. control characters in name (expect 400 or 422 — a raw control byte
+    is invalid JSON, so JSON.parse rejects it before the schema does)"
 printf '%s' '{"name":"AdaObi","email":"a@example.com","interest":"general","message":"control character test message","consent":true,"elapsed":9000}' > /tmp/dh-ctrl.json
 curl -s -X POST "$API" -H 'content-type: application/json' -H "origin: $BASE" -H 'x-forwarded-for: 203.0.113.60' --data-binary @/tmp/dh-ctrl.json -w " [%{http_code}]\n"
 
