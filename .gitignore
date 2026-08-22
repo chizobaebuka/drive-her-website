@@ -6,6 +6,9 @@
 # testing
 /coverage
 
+/AGENTS.md
+/CLAUDE.md
+
 # next.js
 /.next/
 /out/
