@@ -2,9 +2,9 @@
   "name": "driveher-website",
   "version": "1.0.0",
   "private": true,
-  "description": "DriveHer Urban Mobility Services Limited — corporate & conversion website",
+  "description": "DriveHer Urban Mobility Services Limited \u2014 corporate & conversion website",
   "engines": {
-    "node": ">=20"
+    "node": "22.x"
   },
   "scripts": {
     "dev": "next dev",
