@@ -4,10 +4,74 @@
  * made once.
  */
 
-/** Canonical origin. Set NEXT_PUBLIC_SITE_URL in the deployment environment. */
-export const SITE_URL = (
-  process.env.NEXT_PUBLIC_SITE_URL ?? 'https://driveher.ng'
-).replace(/\/$/, '');
+/**
+ * Canonical origin for the site.
+ *
+ * Resolution order:
+ *   1. NEXT_PUBLIC_SITE_URL — the explicit setting, always wins.
+ *   2. NEXT_PUBLIC_VERCEL_PROJECT_PRODUCTION_URL — the project's production
+ *      domain, injected by Vercel when system environment variables are
+ *      exposed.
+ *   3. NEXT_PUBLIC_VERCEL_URL — the per-deployment URL, so preview builds get
+ *      correct canonical and OpenGraph URLs with no configuration.
+ *   4. The hard-coded production domain.
+ *
+ * Every candidate is validated rather than trusted. An environment variable
+ * that exists but is empty, whitespace, or not a usable URL is treated as
+ * absent — `??` alone would accept `''` and hand an invalid value to
+ * `new URL()` in the root layout, which fails the production build with a
+ * cryptic ERR_INVALID_URL during page-data collection.
+ *
+ * Only NEXT_PUBLIC_* variables are read here. This module is imported by
+ * client components, and a server-only variable would resolve differently on
+ * each side of the boundary.
+ */
+const FALLBACK_SITE_URL = 'https://driveher.ng';
+
+function normaliseSiteUrl(value: string | undefined): string | null {
+  const trimmed = value?.trim();
+  if (!trimmed) return null;
+
+  // Vercel supplies bare hostnames (`my-app.vercel.app`) with no protocol, so
+  // add one — but only when no scheme is present at all. Prepending to a value
+  // that already carries a scheme would turn `ftp://host` into the valid but
+  // nonsensical `https://ftp//host` instead of rejecting it.
+  const hasScheme = /^[a-z][a-z0-9+.-]*:/i.test(trimmed);
+  const candidate = hasScheme ? trimmed : `https://${trimmed}`;
+
+  try {
+    const url = new URL(candidate);
+    if (url.protocol !== 'https:' && url.protocol !== 'http:') return null;
+    if (!url.hostname) return null;
+    // Keep a sub-path deployment, drop a meaningless trailing slash.
+    return url.pathname === '/'
+      ? url.origin
+      : `${url.origin}${url.pathname.replace(/\/+$/, '')}`;
+  } catch {
+    return null;
+  }
+}
+
+export const SITE_URL =
+  normaliseSiteUrl(process.env.NEXT_PUBLIC_SITE_URL) ??
+  normaliseSiteUrl(process.env.NEXT_PUBLIC_VERCEL_PROJECT_PRODUCTION_URL) ??
+  normaliseSiteUrl(process.env.NEXT_PUBLIC_VERCEL_URL) ??
+  FALLBACK_SITE_URL;
+
+// Surface a misconfigured value at build time instead of letting it silently
+// change every canonical URL on the site. Server-side only, so it never ships
+// to the browser console.
+if (
+  typeof window === 'undefined' &&
+  process.env.NEXT_PUBLIC_SITE_URL !== undefined &&
+  normaliseSiteUrl(process.env.NEXT_PUBLIC_SITE_URL) === null
+) {
+  console.warn(
+    `[site] NEXT_PUBLIC_SITE_URL is set but unusable (received ${JSON.stringify(
+      process.env.NEXT_PUBLIC_SITE_URL,
+    )}). Falling back to ${SITE_URL}. Set it to a full origin, e.g. https://driveher.ng`,
+  );
+}
 
 export const site = {
   legalName: 'DriveHer Urban Mobility Services Limited',
