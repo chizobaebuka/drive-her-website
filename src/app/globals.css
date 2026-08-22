@@ -1,0 +1,294 @@
+@import 'tailwindcss';
+
+/* ============================================================================
+   DriveHer Design System
+   Brand tokens derived from DriveHer Bayelsa (BWGMI) and DriveHer Delta (DWCMI)
+   collateral: deep institutional navy, clean-energy green, Bayelsa gold and the
+   Delta women's magenta used strictly as a programme accent.
+   ========================================================================== */
+
+@theme {
+  /* --- Brand: Navy (institutional / trust) --- */
+  --color-navy-50: #eef4fb;
+  --color-navy-100: #d6e4f4;
+  --color-navy-200: #adc8e7;
+  --color-navy-300: #7ba3d3;
+  --color-navy-400: #4a7ab6;
+  --color-navy-500: #2b5991;
+  --color-navy-600: #1b4373;
+  --color-navy-700: #12345c;
+  --color-navy-800: #0c2b4b;
+  --color-navy-900: #08203a;
+  --color-navy-950: #051426;
+
+  /* --- Brand: Green (clean energy / growth) --- */
+  --color-green-50: #eefaf1;
+  --color-green-100: #d5f3dd;
+  --color-green-200: #ade6bd;
+  --color-green-300: #75d193;
+  --color-green-400: #43b869;
+  --color-green-500: #2fa84f;
+  --color-green-600: #1b7f3b;
+  --color-green-700: #166531;
+  --color-green-800: #12502a;
+  --color-green-900: #0d3c20;
+
+  /* --- Accent: Gold (Bayelsa programme) --- */
+  --color-gold-100: #f7edcf;
+  --color-gold-300: #e2c464;
+  --color-gold-500: #c8a227;
+  --color-gold-700: #9a7c14;
+
+  /* --- Accent: Magenta (Delta women's programme) --- */
+  --color-magenta-100: #fde0ef;
+  --color-magenta-300: #f77ab8;
+  --color-magenta-500: #e5007d;
+  --color-magenta-700: #ad005e;
+
+  /* --- Neutrals --- */
+  --color-ink: #0b1520;
+  --color-body: #43525f;
+  /* Chosen so small text clears WCAG AA (4.5:1) on both --color-surface and
+     --color-canvas: 5.25:1 on white, 4.92:1 on canvas. */
+  --color-muted: #5f6e7b;
+  --color-line: #e2e8ee;
+  --color-surface: #ffffff;
+  --color-canvas: #f6f8f9;
+
+  /* --- Typography --- */
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, -apple-system,
+    'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --font-display: var(--font-display), var(--font-inter), ui-sans-serif,
+    system-ui, sans-serif;
+
+  /* --- Radii --- */
+  --radius-xs: 0.375rem;
+  --radius-sm: 0.5rem;
+  --radius-md: 0.75rem;
+  --radius-lg: 1rem;
+  --radius-xl: 1.5rem;
+  --radius-2xl: 2rem;
+
+  /* --- Elevation --- */
+  --shadow-card: 0 1px 2px rgb(8 32 58 / 0.04), 0 8px 24px -12px rgb(8 32 58 / 0.18);
+  --shadow-lift: 0 2px 4px rgb(8 32 58 / 0.05), 0 20px 40px -20px rgb(8 32 58 / 0.3);
+  --shadow-ring: 0 0 0 1px rgb(8 32 58 / 0.06);
+
+  /* --- Motion --- */
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* ============================================================================
+   Base
+   ========================================================================== */
+
+:root {
+  color-scheme: light;
+  scroll-behavior: smooth;
+  /* Offset for the sticky header when jumping to an in-page anchor. */
+  scroll-padding-top: 6rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+@layer base {
+  * {
+    border-color: var(--color-line);
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+    text-rendering: optimizeLegibility;
+  }
+
+  body {
+    background-color: var(--color-surface);
+    color: var(--color-body);
+    font-family: var(--font-sans);
+    font-feature-settings: 'cv11', 'ss01';
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    color: var(--color-ink);
+    font-family: var(--font-display);
+    font-weight: 700;
+    letter-spacing: -0.022em;
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  /* Visible, brand-consistent focus ring for keyboard users. */
+  :focus-visible {
+    outline: 2px solid var(--color-green-500);
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+
+  ::selection {
+    background-color: var(--color-green-200);
+    color: var(--color-navy-900);
+  }
+
+  /* Prevent long unbroken strings (emails, URLs) from blowing out layouts. */
+  address,
+  a[href^='mailto:'] {
+    overflow-wrap: anywhere;
+  }
+}
+
+/* ============================================================================
+   Components
+   ========================================================================== */
+
+@layer components {
+  .container-page {
+    width: 100%;
+    margin-inline: auto;
+    max-width: 80rem;
+    padding-inline: 1.25rem;
+  }
+
+  @media (min-width: 640px) {
+    .container-page {
+      padding-inline: 2rem;
+    }
+  }
+
+  @media (min-width: 1280px) {
+    .container-page {
+      padding-inline: 2.5rem;
+    }
+  }
+
+  /* Editorial prose blocks used on legal pages. */
+  .prose-dh {
+    color: var(--color-body);
+    line-height: 1.75;
+  }
+  .prose-dh h2 {
+    font-size: 1.5rem;
+    line-height: 1.25;
+    margin-top: 2.5rem;
+    margin-bottom: 0.75rem;
+  }
+  .prose-dh h3 {
+    font-size: 1.125rem;
+    line-height: 1.4;
+    margin-top: 1.75rem;
+    margin-bottom: 0.5rem;
+  }
+  .prose-dh p {
+    margin-bottom: 1rem;
+  }
+  .prose-dh ul {
+    list-style: disc;
+    padding-left: 1.25rem;
+    margin-bottom: 1rem;
+  }
+  .prose-dh li {
+    margin-bottom: 0.375rem;
+  }
+  .prose-dh a {
+    color: var(--color-green-600);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  .prose-dh strong {
+    color: var(--color-ink);
+    font-weight: 600;
+  }
+}
+
+/* ============================================================================
+   Utilities
+   ========================================================================== */
+
+@utility grain {
+  /* Subtle tonal texture for dark sections — pure CSS, no image request. */
+  background-image: radial-gradient(
+      circle at 18% 12%,
+      rgb(47 168 79 / 0.22),
+      transparent 45%
+    ),
+    radial-gradient(circle at 82% 8%, rgb(43 89 145 / 0.35), transparent 50%),
+    radial-gradient(circle at 60% 95%, rgb(27 127 59 / 0.18), transparent 55%);
+}
+
+@utility text-gradient-green {
+  background-image: linear-gradient(
+    100deg,
+    var(--color-green-300),
+    var(--color-green-500) 55%,
+    var(--color-green-200)
+  );
+  background-clip: text;
+  color: transparent;
+}
+
+@utility hairline {
+  box-shadow: var(--shadow-ring);
+}
+
+/* Scroll-triggered reveal. Starts hidden only when JS/animation is available;
+   `.reveal` elements are visible by default so no-JS users see all content. */
+@keyframes dh-rise {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 14px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.reveal {
+  animation: dh-rise 0.7s var(--ease-out-expo) both;
+  animation-timeline: view();
+  animation-range: entry 0% cover 22%;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal {
+    animation: none;
+  }
+}
+
+/* Marquee for the partner strip. */
+@keyframes dh-marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.marquee-track {
+  animation: dh-marquee 42s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .marquee-track {
+    animation: none;
+  }
+}

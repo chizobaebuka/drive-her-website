@@ -193,4 +193,3 @@ forecasts. The disclaimer in the footer and in `/legal/terms` states this.
 ---
 
 © DriveHer Urban Mobility Services Limited. All rights reserved.
-# drive-her-website
